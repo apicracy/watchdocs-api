@@ -1,5 +1,5 @@
 require 'mongoid'
-Mongoid.load!('mongoid.yml')
+Mongoid.load!('mongoid.yml', :development)
 
 class Report
   include Mongoid::Document

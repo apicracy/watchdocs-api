@@ -23,8 +23,7 @@
             }
           },
           "body": {
-            "type": ["object", null],
-            "properties": {}
+            "type": ["object", "array", null]
           }
         },
         "required": [
@@ -47,8 +46,7 @@
             }
           },
           "body": {
-            "type": "object",
-            "properties": ["object", null]
+            "type": ["object", "array", null]
           }
         },
         "required": [
