@@ -21,6 +21,22 @@ class App < Sinatra::Base
     [200, {}, 'Success!']
   end
 
+  get '/project/:id/docs' do
+    @endpoints = EndpointSchema.where(project_id: params['id']).distinct(:endpoint)
+    @endpoints.map! do |e|
+      statuses = EndpointSchema.where(endpoint: e).distinct(:status)
+      statuses.map! do |s|
+        EndpointSchema.where(
+          endpoint: e,
+          status: s
+        ).last
+      end
+      [e, statuses]
+    end
+    @endpoints = @endpoints.to_h
+    erb :index
+  end
+
   error Watchdocs::InvalidJsonError do
     [400, {}, json(errors: env['sinatra.error'].message)]
   end
