@@ -1,0 +1,15 @@
+<style>
+body { font-family: Arial; }
+</style>
+
+<% @endpoints.each do |endpoint, schemas| %>
+  <h1> <%= endpoint %> </h1>
+  <% schemas.each do |schema| %>
+    <h2> <%= schema.status %> </h2>
+    <h3> Request </h3>
+    <%= schema.request %>
+    <h3> Response </h3>
+    <%= schema.response %>
+  <% end %>
+  <hr/>
+<% end %>
