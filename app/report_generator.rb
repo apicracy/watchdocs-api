@@ -6,7 +6,8 @@ module Watchdocs
   class ReportGenerator
     attr_reader :requests,
                 :requests_json,
-                :project_id
+                :project_id,
+                :report_id
 
     def initialize(requests_json:, project_id:)
       @requests_json = requests_json
@@ -17,40 +18,32 @@ module Watchdocs
       parse_json
       validate_schema
       store_requests
-      # create_background_job
+      create_background_job
     end
 
     private
 
     def parse_json
-      @requests = JSON.parse(requests_json)
-    rescue JSON::ParserError => e
+      @requests = ::JSON.parse(requests_json)
+    rescue ::JSON::ParserError => e
       raise Watchdocs::InvalidJsonError, e.message
     end
 
     def validate_schema
-      JSON::Validator.validate!(SCHEMA, requests)
-    rescue JSON::Schema::ValidationError => e
+      ::JSON::Validator.validate!(SCHEMA, requests)
+    rescue ::JSON::Schema::ValidationError => e
       raise Watchdocs::InvalidJsonError, e.message
     end
 
     def store_requests
-      endpoints = requests.group_by { |request| request['endpoint'] }
-      endpoints.each do |endpoint, requests|
-        Report.create(
-          project_id: project_id,
-          endpoint: endpoint,
-          created_at: Time.now,
-          requests: requests
-        )
-      end
+      @report_id = Report.create(
+        project_id: project_id,
+        requests: requests
+      ).id.to_s
     end
 
-    # def create_background_job
-    #   Watchdocs::SchemaGenerator.new(
-    #     project_id: params['id']),
-    #     endpoints: endpoints.keys
-    #   ).call
-    # end
+    def create_background_job
+      Watchdocs::Worker::ReportExtractorWorker.perform_async(report_id)
+    end
   end
 end
