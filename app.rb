@@ -5,8 +5,6 @@ require 'pry'
 require 'sidekiq'
 require 'redis'
 
-$redis = Redis.new(url: ENV["REDIS_URL"])
-
 Bundler.require
 
 class App < Sinatra::Base

@@ -5,6 +5,8 @@ require './app/models/endpoint_call'
 require './app/schema_generator'
 require 'sidekiq'
 
+$redis = Redis.new(url: ENV["REDIS_URL"])
+
 module Watchdocs
   module Worker
     class ReportExtractorWorker
