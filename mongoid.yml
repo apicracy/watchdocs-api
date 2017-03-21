@@ -4,3 +4,12 @@ development:
       database: watchdocs
       hosts:
         - localhost:27017
+production:
+  clients:
+    default:
+      url: <%= ENV['MONGODB_URI'] %>
+      options:
+        connect_timeout: 15
+
+
+

@@ -1,9 +1,11 @@
+require 'dotenv'
+Dotenv.load
 require 'sinatra'
 require 'pry'
 require 'sidekiq'
 require 'redis'
 
-$redis = Redis.new
+$redis = Redis.new(url: ENV["REDIS_URL"])
 
 Bundler.require
 
