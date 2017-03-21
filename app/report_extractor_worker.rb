@@ -1,5 +1,5 @@
 require 'mongoid'
-Mongoid.load!('mongoid.yml', :development)
+Mongoid.load!('mongoid.yml', ENV['RACK_ENV'])
 require './app/models/report'
 require './app/models/endpoint_call'
 require './app/schema_generator'
