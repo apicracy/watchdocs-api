@@ -35,14 +35,16 @@ module Watchdocs
       def recent_calls(project_id, endpoint, status)
         EndpointCall.where(
           project_id: project_id,
-          'call.endpoint' => endpoint,
-          'call.response.status' => status
+          endpoint: endpoint,
+          status: status
         ).order(id: :desc).limit(NUMBER_OF_RECENT_CALLS)
       end
 
       def create_schema(calls, source)
         Watchdocs::JSON::SchemaGenerator.new(
-          calls.map { |c| c.call[source][:body] }
+          calls.map do |c|
+            ::JSON.parse(c.call)[source.to_s]['body']
+          end
         ).call.to_json
       end
     end

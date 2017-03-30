@@ -38,7 +38,7 @@ module Watchdocs
     def store_requests
       @report_id = Report.create(
         project_id: project_id,
-        requests: requests
+        requests: requests.to_json
       ).id.to_s
     end
 

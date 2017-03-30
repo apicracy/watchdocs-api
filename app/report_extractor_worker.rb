@@ -1,3 +1,5 @@
+require 'dotenv'
+Dotenv.load
 require 'mongoid'
 Mongoid.load!('mongoid.yml', ENV['RACK_ENV'])
 require './app/models/report'
@@ -36,15 +38,18 @@ module Watchdocs
 
       def extract_endpoint_calls(report)
         endpoints = {}
-        report.requests.each do |request|
-          if endpoints[request[:endpoint]]
-            endpoints[request[:endpoint]] << request[:response][:status]
+        requests = ::JSON.parse(report.requests)
+        requests.each do |request|
+          if endpoints[request['endpoint']]
+            endpoints[request['endpoint']] << request['response']['status']
           else
-            endpoints[request[:endpoint]] = [request[:response][:status]]
+            endpoints[request['endpoint']] = [request['response']['status']]
           end
           EndpointCall.create(
             project_id: report.project_id,
-            call: request
+            call: request.to_json,
+            endpoint: request['endpoint'],
+            status: request['response']['status']
           )
         end
         endpoints.map { |k, v| [k, v.uniq] }.to_h
