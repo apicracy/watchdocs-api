@@ -46,6 +46,7 @@ module Watchdocs
         end
         Watchdocs::JSON::SchemaGenerator.new(recent_bodies).call.to_json
       rescue
+        puts Random.new_seed
         recent_bodies.each { |body| puts body }
       end
     end
