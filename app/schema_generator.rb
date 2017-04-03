@@ -41,11 +41,12 @@ module Watchdocs
       end
 
       def create_schema(calls, source)
-        Watchdocs::JSON::SchemaGenerator.new(
-          calls.map do |c|
-            ::JSON.parse(c.call)[source.to_s]['body']
-          end
-        ).call.to_json
+        recent_bodies = calls.map do |c|
+          ::JSON.parse(c.call)[source.to_s]['body']
+        end
+        Watchdocs::JSON::SchemaGenerator.new(recent_bodies).call.to_json
+      rescue
+        recent_bodies.each { |body| puts body }
       end
     end
   end
