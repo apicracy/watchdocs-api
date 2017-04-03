@@ -45,9 +45,6 @@ module Watchdocs
           ::JSON.parse(c.call)[source.to_s]['body']
         end
         Watchdocs::JSON::SchemaGenerator.new(recent_bodies).call.to_json
-      rescue
-        puts Random.new_seed
-        recent_bodies.each { |body| puts body }
       end
     end
   end
