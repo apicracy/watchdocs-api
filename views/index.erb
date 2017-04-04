@@ -7,12 +7,20 @@ body { font-family: Arial; }
     <h1> <em><%= method %></em> <%= endpoint %> </h1>
     <% statuses.each do |schemas| %>
       <h2> <%= schemas['_id']['status'] %> </h2>
-      <h3> Request </h3>
-      <%= schemas['request'] %>
+      <% if schemas['_id']['status'].to_s =~ /^2/ %>
+        <h3> Request </h3>
+        <h4> Query String Params </h4>
+        <%= schemas['query_string_params'] %>
+        <h4> Headers </h4>
+        <%= schemas['request_headers'] %>
+        <h4> Body </h4>
+        <%= schemas['request'] %>
+      <% end %>
       <h3> Response </h3>
+      <h4> Headers </h4>
+      <%= schemas['response_headers'] %>
+      <h4> Body </h4>
       <%= schemas['response'] %>
-      <h3> Query String Params</h3>
-      <%= schemas['query_string_params'] %>
     <% end %>
   <% end %>
   <hr/>

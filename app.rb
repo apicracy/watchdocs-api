@@ -44,6 +44,12 @@ class App < Sinatra::Base
         },
         'query_string_params' => {
           '$last' => '$query_string_params'
+        },
+        'response_headers' => {
+          '$last' => '$response_headers'
+        },
+        'request_headers' => {
+          '$last' => '$request_headers'
         }
       }
     }

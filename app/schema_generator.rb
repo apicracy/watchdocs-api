@@ -13,10 +13,12 @@ module Watchdocs
           endpoint: endpoint,
           method: method,
           status: status,
-          response: create_schema(recent_bodies(calls, :response))
+          response: create_schema(recent_bodies(calls, :response)),
+          response_headers: create_schema(recent_headers(calls, :response))
         }
         if status.to_s =~ /^2/
           params[:request] = create_schema(recent_bodies(calls, :request))
+          params[:request_headers] = create_schema(recent_headers(calls, :request))
           params[:query_string_params] = create_schema(recent_query_params(calls))
         end
         EndpointSchema.create(params)
@@ -56,14 +58,25 @@ module Watchdocs
       end
 
       def recent_bodies(calls, source)
-        calls.map do |c|
-          ::JSON.parse(c.call)[source.to_s]['body']
-        end
+        recent_objects(calls, source, :body)
       end
 
       def recent_query_params(calls)
+        recent_objects(calls, :request, :query_string_params)
+      end
+
+      def recent_headers(calls, source)
+        recent_objects(calls, source, :headers) do |headers|
+          headers.map do |header|
+            [header, 'string'] # TODO: move this to middleware in the future
+          end.to_h
+        end
+      end
+
+      def recent_objects(calls, source, object)
         calls.map do |c|
-          ::JSON.parse(c.call)['request']['query_string_params']
+          objects = ::JSON.parse(c.call)[source.to_s][object.to_s]
+          block_given? ? yield(objects) : objects
         end
       end
     end

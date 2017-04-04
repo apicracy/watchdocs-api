@@ -7,4 +7,6 @@ class EndpointSchema
   field :request, type: String
   field :response, type: String
   field :query_string_params, type: String
+  field :response_headers, type: String
+  field :request_headers, type: String
 end
