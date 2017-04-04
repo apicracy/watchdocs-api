@@ -11,3 +11,5 @@
 public/temp/*
 public/content/*
 !public/content/default.json
+
+*.env

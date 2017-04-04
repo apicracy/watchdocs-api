@@ -40,19 +40,32 @@ module Watchdocs
         endpoints = {}
         requests = ::JSON.parse(report.requests)
         requests.each do |request|
-          if endpoints[request['endpoint']]
-            endpoints[request['endpoint']] << request['response']['status']
-          else
-            endpoints[request['endpoint']] = [request['response']['status']]
-          end
+          endpoint = request['endpoint']
+          method = request['request']['method']
+          status = request['response']['status']
+          endpoints = log_call(endpoints, endpoint, method, status)
           EndpointCall.create(
             project_id: report.project_id,
             call: request.to_json,
-            endpoint: request['endpoint'],
-            status: request['response']['status']
+            endpoint: endpoint,
+            status: status,
+            method: method
           )
         end
-        endpoints.map { |k, v| [k, v.uniq] }.to_h
+        endpoints
+      end
+
+      def log_call(endpoints, endpoint, method, status)
+        if endpoints.dig(endpoint, method)
+          endpoints[endpoint][method] << status
+          endpoints[endpoint][method].uniq
+        elsif endpoints[endpoint]
+          endpoints[endpoint][method] = [status]
+        else
+          endpoints[endpoint] = {}
+          endpoints[endpoint][method] = [status]
+        end
+        endpoints
       end
     end
   end

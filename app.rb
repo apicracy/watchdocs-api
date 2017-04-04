@@ -24,18 +24,35 @@ class App < Sinatra::Base
   end
 
   get '/project/:id/docs' do
-    @endpoints = EndpointSchema.where(project_id: params['id']).distinct(:endpoint)
-    @endpoints.map! do |e|
-      statuses = EndpointSchema.where(endpoint: e).distinct(:status)
-      statuses.map! do |s|
-        EndpointSchema.where(
-          endpoint: e,
-          status: s
-        ).last
-      end
-      [e, statuses]
-    end
-    @endpoints = @endpoints.to_h
+    match = {
+      '$match' => {
+        'project_id' => params['id'].to_i
+      }
+    }
+    group = {
+      '$group' => {
+        '_id' => {
+          'endpoint' => '$endpoint',
+          'method' => '$method',
+          'status' => '$status'
+        },
+        'request' => {
+          '$last' => '$request'
+        },
+        'response' => {
+          '$last' => '$response'
+        }
+      }
+    }
+    sort = {
+      '$sort' => {
+        'endpoint' => 1
+      }
+    }
+    @schemas = []
+    EndpointSchema.collection
+                  .aggregate([match, group, sort])
+                  .each { |s| @schemas << s }
     erb :index
   end
 

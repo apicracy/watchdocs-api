@@ -2,14 +2,16 @@
 body { font-family: Arial; }
 </style>
 
-<% @endpoints.each do |endpoint, schemas| %>
-  <h1> <%= endpoint %> </h1>
-  <% schemas.each do |schema| %>
-    <h2> <%= schema.status %> </h2>
-    <h3> Request </h3>
-    <%= schema.request %>
-    <h3> Response </h3>
-    <%= schema.response %>
+<% @schemas.group_by{ |s| s["_id"]["endpoint"] }.each do |endpoint, methods| %>
+  <% methods.group_by{ |s| s["_id"]["method"] }.each do |method, statuses| %>
+    <h1> <em><%= method %></em> <%= endpoint %> </h1>
+    <% statuses.each do |schemas| %>
+      <h2> <%= schemas['_id']['status'] %> </h2>
+      <h3> Request </h3>
+      <%= schemas['request'] %>
+      <h3> Response </h3>
+      <%= schemas['response'] %>
+    <% end %>
   <% end %>
   <hr/>
 <% end %>

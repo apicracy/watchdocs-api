@@ -6,11 +6,12 @@ module Watchdocs
     NUMBER_OF_RECENT_CALLS = 5
 
     class << self
-      def generate(project_id, endpoint, status)
-        calls = recent_calls(project_id, endpoint, status)
+      def generate(project_id, endpoint, method, status)
+        calls = recent_calls(project_id, endpoint, method, status)
         params = {
           project_id: project_id,
           endpoint: endpoint,
+          method: method,
           status: status,
           response: create_schema(calls, :response)
         }
@@ -19,23 +20,30 @@ module Watchdocs
       end
 
       def generate_for_endpoints(project_id, endpoints)
-        endpoints.each do |endpoint, statuses|
-          generate_for_statuses(project_id, endpoint, statuses)
+        endpoints.each do |endpoint, methods|
+          generate_for_methods(project_id, endpoint, methods)
         end
       end
 
-      def generate_for_statuses(project_id, endpoint, statuses)
+      def generate_for_methods(project_id, endpoint, methods)
+        methods.each do |method, statuses|
+          generate_for_statuses(project_id, endpoint, method, statuses)
+        end
+      end
+
+      def generate_for_statuses(project_id, endpoint, method, statuses)
         statuses.uniq.each do |status|
-          generate(project_id, endpoint, status)
+          generate(project_id, endpoint, method, status)
         end
       end
 
       private
 
-      def recent_calls(project_id, endpoint, status)
+      def recent_calls(project_id, endpoint, method, status)
         EndpointCall.where(
           project_id: project_id,
           endpoint: endpoint,
+          method: method,
           status: status
         ).order(id: :desc).limit(NUMBER_OF_RECENT_CALLS)
       end
