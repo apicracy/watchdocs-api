@@ -41,6 +41,9 @@ class App < Sinatra::Base
         },
         'response' => {
           '$last' => '$response'
+        },
+        'query_string_params' => {
+          '$last' => '$query_string_params'
         }
       }
     }

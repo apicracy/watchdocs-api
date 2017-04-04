@@ -6,4 +6,5 @@ class EndpointSchema
   field :status, type: Integer
   field :request, type: String
   field :response, type: String
+  field :query_string_params, type: String
 end

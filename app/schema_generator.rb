@@ -13,9 +13,12 @@ module Watchdocs
           endpoint: endpoint,
           method: method,
           status: status,
-          response: create_schema(calls, :response)
+          response: create_schema(recent_bodies(calls, :response))
         }
-        params[:request] = create_schema(calls, :request) if status.to_s =~ /^2/
+        if status.to_s =~ /^2/
+          params[:request] = create_schema(recent_bodies(calls, :request))
+          params[:query_string_params] = create_schema(recent_query_params(calls))
+        end
         EndpointSchema.create(params)
       end
 
@@ -48,11 +51,20 @@ module Watchdocs
         ).order(id: :desc).limit(NUMBER_OF_RECENT_CALLS)
       end
 
-      def create_schema(calls, source)
-        recent_bodies = calls.map do |c|
+      def create_schema(recent_objects)
+        Watchdocs::JSON::SchemaGenerator.new(recent_objects).call.to_json
+      end
+
+      def recent_bodies(calls, source)
+        calls.map do |c|
           ::JSON.parse(c.call)[source.to_s]['body']
         end
-        Watchdocs::JSON::SchemaGenerator.new(recent_bodies).call.to_json
+      end
+
+      def recent_query_params(calls)
+        calls.map do |c|
+          ::JSON.parse(c.call)['request']['query_string_params']
+        end
       end
     end
   end
