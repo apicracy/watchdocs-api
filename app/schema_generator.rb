@@ -1,4 +1,5 @@
 require './app/models/endpoint_schema'
+require './app/schema_exporter'
 require 'multijson_schema_generator'
 
 module Watchdocs
@@ -21,7 +22,8 @@ module Watchdocs
           params[:request_headers] = create_schema(recent_headers(calls, :request))
           params[:query_string_params] = create_schema(recent_query_params(calls))
         end
-        EndpointSchema.create(params)
+        endpoint_schema = EndpointSchema.create(params)
+        SchemaExporter.export(endpoint_schema)
       end
 
       def generate_for_endpoints(project_id, endpoints)
