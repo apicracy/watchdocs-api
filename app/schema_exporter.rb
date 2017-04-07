@@ -2,12 +2,17 @@ require 'httparty'
 
 module Watchdocs
   module SchemaExporter
+    class ConfigurationError < StandardError; end
     class WatchdocsApiError < StandardError; end
 
     DEFAULT_ERROR = 'Unknown API Error occured.'.freeze
 
     class << self
       def export(endpoint_schema)
+        unless api_url.present?
+          raise ConfigurationError,
+                'Watchdocs-backend export url not defined. Define in EXPORT_URL.'
+        end
         response = HTTParty.post(
           api_url,
           body: payload(endpoint_schema),
