@@ -17,7 +17,7 @@ module Watchdocs
           api_url,
           body: payload(endpoint_schema),
           headers: { 'Content-Type' => 'application/json' },
-          # basic_auth: api_auth
+          basic_auth: api_auth
         )
         check_response(response)
       end
@@ -83,13 +83,12 @@ module Watchdocs
         ENV['EXPORT_URL']
       end
 
-      # TODO: Add authentication
-      # def api_auth
-      #   {
-      #     username: Watchdocs::Rails.configuration.api_key,
-      #     password: Watchdocs::Rails.configuration.api_secret
-      #   }
-      # end
+      def api_auth
+        {
+          username: ENV['EXPORT_AUTH_USERNAME'],
+          password: ENV['EXPORT_AUTH_PASSWORD']
+        }
+      end
     end
   end
 end
