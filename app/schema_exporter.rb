@@ -26,7 +26,7 @@ module Watchdocs
 
       def payload(endpoint_schema)
         payload = {
-          project_id: endpoint_schema.project_id,
+          app_id: endpoint_schema.project_id,
           endpoint: {
             url: endpoint_schema.endpoint,
             method: endpoint_schema.method

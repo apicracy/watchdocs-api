@@ -10,57 +10,21 @@ class App < Sinatra::Base
     set :show_exceptions, :after_handler
   end
 
-  API_KEY = '8L9qh77q9570H0LIz90Aj00T5mcOHW1w'.freeze
-  API_SECRET = 'G52uFXHPjyxRY3JdBIsw562uJ8bUdrE2'.freeze
-
-  post '/api/v1/project/:id/reports' do
-    protected!
+  post '/api/v1/reports' do
+    authorize_by_project!
     request.body.rewind
     Watchdocs::ReportGenerator.new(
       requests_json: request.body.read,
-      project_id: params['id']
+      project_id: @project.app_id
     ).call
     [200, {}, 'Success!']
   end
 
-  get '/project/:id/docs' do
-    match = {
-      '$match' => {
-        'project_id' => params['id'].to_i
-      }
-    }
-    group = {
-      '$group' => {
-        '_id' => {
-          'endpoint' => '$endpoint',
-          'method' => '$method',
-          'status' => '$status'
-        },
-        'request' => {
-          '$last' => '$request'
-        },
-        'response' => {
-          '$last' => '$response'
-        },
-        'query_string_params' => {
-          '$last' => '$query_string_params'
-        },
-        'response_headers' => {
-          '$last' => '$response_headers'
-        },
-        'request_headers' => {
-          '$last' => '$request_headers'
-        }
-      }
-    }
-    sort = {
-      '$sort' => {
-        'endpoint' => 1
-      }
-    }
+  get '/project/:app_id/docs' do
+    aggregation = EndpointSchema.aggregation_pipeline(params['app_id'])
     @schemas = []
     EndpointSchema.collection
-                  .aggregate([match, group, sort])
+                  .aggregate(aggregation)
                   .each { |s| @schemas << s }
     erb :index
   end
@@ -70,17 +34,20 @@ class App < Sinatra::Base
   end
 
   helpers do
-    def protected!
-      return if authorized?
+    def authorize_by_project!
+      return if set_project
       headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
-      halt 401, "Not authorized\n"
+      halt 404, 'Project not found'
     end
 
-    def authorized?
-      #TODO: Authorize by project credentials
+    def set_project
       @auth ||= Rack::Auth::Basic::Request.new(request.env)
-      @auth.provided? && @auth.basic? && @auth.credentials &&
-        @auth.credentials == [API_KEY, API_SECRET]
+      return unless valid_auth?
+      @project = Project.authorize(*@auth.credentials)
+    end
+
+    def valid_auth?
+      @auth.provided? && @auth.basic? && @auth.credentials.present?
     end
   end
 end
