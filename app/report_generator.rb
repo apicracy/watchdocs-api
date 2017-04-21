@@ -1,5 +1,5 @@
 require 'json-schema'
-SCHEMA = JSON.parse(File.open('schema.json').read)
+SCHEMA = JSON.parse(File.open('schemas/report.json').read)
 
 module Watchdocs
   class InvalidJsonError < StandardError; end

@@ -4,7 +4,6 @@ require 'mongoid'
 Mongoid.load!('mongoid.yml', ENV['RACK_ENV'])
 require './app/models/report'
 require './app/models/endpoint_call'
-require './app/models/project'
 require './app/schema_generator'
 require 'sidekiq'
 

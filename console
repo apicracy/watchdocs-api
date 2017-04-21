@@ -3,6 +3,7 @@
 require "bundler/setup"
 require './app/report_extractor_worker'
 require './app/report_generator'
+require './app/project_creator'
 require 'sidekiq/api'
 
 # You can add fixtures and/or initialization code here to make experimenting
