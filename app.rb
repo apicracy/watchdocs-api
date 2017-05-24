@@ -42,6 +42,10 @@ class App < Sinatra::Base
     [400, {}, json(errors: env['sinatra.error'].message)]
   end
 
+  error do
+    [500, {}, json(errors: env['sinatra.error'].message)]
+  end
+
   helpers do
     def authorize_by_project!
       return if valid_auth? && set_project
