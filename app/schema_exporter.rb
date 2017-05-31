@@ -33,14 +33,12 @@ module Watchdocs
           },
           response: {
             status: endpoint_schema.status,
-            headers: parse_json(endpoint_schema.response_headers),
             body: parse_json(endpoint_schema.response)
           }
         }
         if endpoint_schema.status.to_s =~ /^2/
           payload[:request] = {
             url_params: parse_json(endpoint_schema.query_string_params),
-            headers: parse_json(endpoint_schema.request_headers),
             body: parse_json(endpoint_schema.request)
           }
         end
@@ -58,7 +56,7 @@ module Watchdocs
 
       def parse_json(json)
         ::JSON.parse(json)
-      rescue ::JSON::ParserError => e
+      rescue
         {}
       end
 
