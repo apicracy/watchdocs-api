@@ -91,9 +91,9 @@ module Watchdocs
           new_schema.slice(:project_id, :endpoint, :method, :status)
         ).last
         return true unless old_schema
-        return true if new_schema.response != old_schema.response
-        return true if new_schema.request != old_schema.request
-        return true if new_schema.query_string_params != old_schema.query_string_params
+        return true if new_schema[:response] != old_schema.response
+        return true if new_schema[:request] != old_schema.request
+        return true if new_schema[:query_string_params] != old_schema.query_string_params
         false
       end
 
