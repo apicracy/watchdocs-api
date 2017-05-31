@@ -9,6 +9,7 @@ gem 'dotenv'
 gem 'pry'
 gem 'pry-nav'
 
+gem 'activesupport'
 gem 'mongoid', '~> 6.1.0'
 gem 'json-schema'
 gem 'sidekiq'
