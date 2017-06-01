@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/mazikwyry/multijson_schema_generator.git
-  revision: 6233a293507a03afc29d226f33f9da48fbd992b4
+  revision: e80871e379e77a15d167cd5720dcdc71e0f5c1b8
   specs:
-    multijson_schema_generator (0.2.3)
+    multijson_schema_generator (0.2.4)
 
 GEM
   remote: https://rubygems.org/
