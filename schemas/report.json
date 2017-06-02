@@ -29,7 +29,6 @@
         "required": [
           "url",
           "method",
-          "headers",
           "body"
         ]
       },
@@ -51,7 +50,6 @@
         },
         "required": [
           "status",
-          "headers",
           "body"
         ]
       }
