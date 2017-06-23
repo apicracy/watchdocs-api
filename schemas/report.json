@@ -10,10 +10,13 @@
       "request": {
         "type": "object",
         "properties": {
-          "url": {
-            "type": "string"
+          "query_string_params": {
+            "type": ["object", "null"]
           },
           "method": {
+            "type": "string"
+          },
+          "url": {
             "type": "string"
           },
           "headers": {
@@ -23,11 +26,11 @@
             }
           },
           "body": {
-            "type": ["object", "array", null]
+            "type": ["object", "array", "null"]
           }
         },
         "required": [
-          "url",
+          "query_string_params",
           "method",
           "body"
         ]
@@ -45,7 +48,7 @@
             }
           },
           "body": {
-            "type": ["object", "array", null]
+            "type": ["object", "array", "null"]
           }
         },
         "required": [
